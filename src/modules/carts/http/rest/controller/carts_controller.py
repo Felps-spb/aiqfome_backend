@@ -13,15 +13,15 @@ from src.modules.carts.http.rest.dto.carts_dto import CartCreateDTO, CartUpdateD
 from src.modules.carts.persistence.sqlalchemy.sqlalchemy_service import SQLAlchemyCartsService 
 
 logger = logging.getLogger(__name__)
-router = APIRouter(prefix="/carts", tags=["Carts"])
+router = APIRouter(tags=["Carts"])
 
 
-@router.get("/", response_model=List[CartResponseDTO])
+@router.get("/carts", response_model=List[CartResponseDTO])
 async def get_all_carts(db: AsyncSession = Depends(get_db), current_user: UserEntity = Depends(get_current_user)):
     cart_service = SQLAlchemyCartsService(db)
     return await cart_service.get_all_carts()
 
-@router.post("/", response_model=CartResponseDTO, status_code=status.HTTP_201_CREATED)
+@router.post("/carts", response_model=CartResponseDTO, status_code=status.HTTP_201_CREATED)
 async def create_cart(
     cart_data: CartCreateDTO, 
     db: AsyncSession = Depends(get_db),
@@ -31,7 +31,7 @@ async def create_cart(
     new_cart = await cart_service.add_new_cart(cart_data)
     return new_cart
 
-@router.get("/{cart_id}", response_model=CartResponseDTO)
+@router.get("/carts/{cart_id}", response_model=CartResponseDTO)
 async def get_single_cart(
     cart_id: uuid.UUID, 
     db: AsyncSession = Depends(get_db),
@@ -40,7 +40,7 @@ async def get_single_cart(
     cart_service = SQLAlchemyCartsService(db)
     return await cart_service.get_by_id(cart_id)
 
-@router.put("/{cart_id}", response_model=CartResponseDTO)
+@router.put("/carts/{cart_id}", response_model=CartResponseDTO)
 async def update_cart(
     cart_id: uuid.UUID,
     cart_data: CartUpdateDTO,
@@ -50,13 +50,12 @@ async def update_cart(
     cart_service = SQLAlchemyCartsService(db)
     return await cart_service.update_cart(cart_id, cart_data)
 
-@router.delete("/{cart_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/carts/{cart_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_cart(
     cart_id: uuid.UUID,
     db: AsyncSession = Depends(get_db),
     current_user: UserEntity = Depends(get_current_user)
 ):
-    
     cart_service = SQLAlchemyCartsService(db)
     await cart_service.delete_cart(cart_id)
     return None

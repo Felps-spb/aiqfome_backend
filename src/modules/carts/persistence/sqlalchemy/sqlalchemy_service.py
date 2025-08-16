@@ -3,7 +3,6 @@ from fastapi import HTTPException, status
 from sqlalchemy import select, delete
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
-
 from src.modules.carts.core.entity.carts_entity import CartEntity
 from src.modules.carts.core.entity.cartitem_entity import CartItemEntity
 from src.modules.products.core.entity.product_entity import ProductEntity
@@ -113,8 +112,6 @@ class SQLAlchemyCartsService(CartsService):
         result = await self.db.execute(stmt)
         updated_cart = result.scalar_one()
         return updated_cart
-
-    from sqlalchemy import delete
 
     async def delete_cart(self, cart_id: uuid.UUID):
         result = await self.db.execute(select(CartEntity).where(CartEntity.id == cart_id))
